@@ -72,6 +72,9 @@ namespace underwolf {
             FileServer = new( ConfigPath );
             FileServer.OnExtensionReload += OnExtensionReload;
             FileServer.OnExtensionDisconnect += OnExtensionDisconnect;
+            FileServer.OnFilesChanged += OnFilesChanged;
+            FileServer.AddResource("underwolf-utilities.js", Path.Join(Program.CONFIG_PATH, "utilities.js"));
+            FileServer.AddVariable("[UNDERWOLF-FILESERVER]", FileServer.Url);
 
             Logger = new( Title );
 
@@ -102,8 +105,14 @@ namespace underwolf {
             while ( Connected ) ; // wait for the socket to disconnect
         }
 
+        private void OnFilesChanged() {
+            Logger.Info("Files changed. reloading Extension");
+            InjectJS("location.reload();");
+        }
+
         private void OnExtensionReload() {
-            Thread.Sleep(1000); // just make sure the page has finished reloading
+            Logger.Info("Extension Refreshed");
+            Thread.Sleep(2000); // just make sure the page has finished reloading
             InjectAllFiles();
         }
 
@@ -114,7 +123,7 @@ namespace underwolf {
         public void InjectJS( string js ) {
             int id = GetNextID();
             JSRequest jsr = new(id, js);
-            Logger.Info( $"[{id}] Injected JS: {js}" );
+            Logger.Info( $"[{id}] Injected JS: {js.Replace("\n", " ")}" );
             WSClient.Send( JsonSerializer.Serialize( jsr ).Replace( "\\u0027", "'" ) );
         }
 
@@ -135,13 +144,6 @@ namespace underwolf {
         }
 
         public void InjectUtilities() {
-            string utilitiesFile = Path.Join(Program.CONFIG_PATH, "utilities.js");
-            string newFile = Path.Join(Program.CONFIG_PATH, $"{ExtensionID}-utilities.js");
-            File.Create(newFile).Close();
-            string content = File.ReadAllText(utilitiesFile);
-            content = content.Replace("[UNDERWOLF-FILESERVER]", FileServer.Url);
-            File.WriteAllText(newFile, content );
-            FileServer.AddResource("underwolf-utilities.js", newFile);
             InjectJSFile("underwolf-utilities.js");
         }
 
