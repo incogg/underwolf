@@ -71,18 +71,19 @@ namespace underwolf {
 
             FileServer = new( ConfigPath );
             FileServer.OnExtensionReload += OnExtensionReload;
+            FileServer.OnExtensionDisconnect += OnExtensionDisconnect;
 
             Logger = new( Title );
 
             WSClient = new( new Uri( WebSocketDebuggerUrl ) );
             WSClient.ReconnectTimeout = TimeSpan.FromSeconds( 30 );
             WSClient.ReconnectionHappened.Subscribe( info => {
-                if ( info.Type != ReconnectionType.Initial ) return;
-                Logger.Info( "Connected" );
+                //if ( info.Type != ReconnectionType.Initial ) return;
+                Logger.Info($"Web socket connected : {info.Type}");
                 Connected = true;
             } );
             WSClient.DisconnectionHappened.Subscribe( info => {
-                Logger.Info( "Disconnected" );
+                Logger.Info( $"Web socket disconnected: {info.Type}" );
                 Connected = false;
             } );
             WSClient.MessageReceived.Subscribe( msg => LogResponse( msg.Text ) );
@@ -102,13 +103,18 @@ namespace underwolf {
         }
 
         private void OnExtensionReload() {
-            InjectJS( "console.log('You just reloaded!');" );
+            Thread.Sleep(1000); // just make sure the page has finished reloading
+            InjectAllFiles();
+        }
+
+        private void OnExtensionDisconnect() {
+            Task.Run(Disconnect);
         }
 
         public void InjectJS( string js ) {
             int id = GetNextID();
             JSRequest jsr = new(id, js);
-            Logger.Info( $"[{id}] Injected JS" );
+            Logger.Info( $"[{id}] Injected JS: {js}" );
             WSClient.Send( JsonSerializer.Serialize( jsr ).Replace( "\\u0027", "'" ) );
         }
 
@@ -128,9 +134,21 @@ namespace underwolf {
             InjectJS( content );
         }
 
+        public void InjectUtilities() {
+            string utilitiesFile = Path.Join(Program.CONFIG_PATH, "utilities.js");
+            string newFile = Path.Join(Program.CONFIG_PATH, $"{ExtensionID}-utilities.js");
+            File.Create(newFile).Close();
+            string content = File.ReadAllText(utilitiesFile);
+            content = content.Replace("[UNDERWOLF-FILESERVER]", FileServer.Url);
+            File.WriteAllText(newFile, content );
+            FileServer.AddResource("underwolf-utilities.js", newFile);
+            InjectJSFile("underwolf-utilities.js");
+        }
+
         public void InjectAllFiles() {
+            InjectUtilities();
             foreach ( string file in Directory.GetFiles( ConfigPath ) ) {
-                string fileName = file.Replace(ConfigPath, string.Empty ).Replace("\\", "/");
+                string fileName = file.Replace(ConfigPath, string.Empty ).Replace("\\", "");
                 switch ( Path.GetExtension( fileName )[1..] ) {
                     case "js":
                         InjectJSFile( fileName );

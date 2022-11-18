@@ -17,7 +17,7 @@ namespace underwolf {
 #endif
 
         public static readonly string DEBUGGER_URL = "http://localhost:54284/json";
-        public static readonly int APPLICATION_TIMEOUT = 10; // in seconds
+        public static readonly int APPLICATION_TIMEOUT = 20; // in seconds
 
         public static string WORKING_FOLDER = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!;
         public static string CONFIG_PATH_FILE = Path.Join( WORKING_FOLDER, "config-path" );
@@ -60,7 +60,7 @@ namespace underwolf {
             OverwolfExtension curse = new(curseJson, appID);
             await curse.Connect();
             curse.InjectAllFiles();
-            await curse.Disconnect();
+            //await curse.Disconnect();
 
 end:
 #if (DEBUG)

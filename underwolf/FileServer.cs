@@ -10,16 +10,27 @@ using System.Net.NetworkInformation;
 namespace underwolf {
 
     public delegate void ExtensionReload();
+    public delegate void ExtensionDisconnect();
 
     internal class FileServer {
 
         public string Url;
         public string FolderPath;
         public event ExtensionReload? OnExtensionReload;
+        public event ExtensionDisconnect? OnExtensionDisconnect;
+
+        private static Dictionary<string, string> ContentTypes = new(){
+            { "js", "text/javascript" },
+            { "css", "text/css" },
+            { "png", "image/png" },
+            { "jpg", "image/jpg" },
+        };
 
         private HttpListener Listener;
         private Logger Logger = new("FileServer");
-        private List<string> Files = new();
+        private Dictionary<string, string> Resources;
+        private Dictionary<string, string> AdditionalResources;
+        private Dictionary<string, Delegate> FunctionResources;
         private bool Running;
 
         public FileServer(string path) {
@@ -28,6 +39,12 @@ namespace underwolf {
 
             Listener = new();
             Listener.Prefixes.Add( Url );
+            Resources = new();
+            AdditionalResources = new();
+            FunctionResources = new() {
+                { "reload", () => OnExtensionReload?.Invoke() },
+                { "disconnect", () => { OnExtensionDisconnect?.Invoke(); Running = false; } },
+            };
         }
 
         public void Start() {
@@ -50,51 +67,62 @@ namespace underwolf {
 
                 HttpListenerRequest req = ctx.Request;
                 HttpListenerResponse res = ctx.Response;
-                if ( req.Url == null )
-                    continue;
+                if ( req.Url == null ) continue;
 
-                Files = new( Directory.GetFiles( FolderPath ) );
-                string path = req.Url.AbsolutePath;
-                if ( path == "/disconnect" ) {
+                GetFiles();
+
+                string path = req.Url.AbsolutePath[1..]; // remove leading slash
+                Delegate? func;
+                FunctionResources.TryGetValue( path, out func );
+                if ( func != null ) {
+                    func.DynamicInvoke();
                     res.StatusCode = 200;
                     res.Close();
-                    break;
-                } else if ( path == "/reload" ) {
-                    OnExtensionReload?.Invoke();
-                    res.StatusCode = 200;
-                    res.Close();
-                    break;
+                    continue;
                 }
 
-                string fileName = CombinePaths( FolderPath, path.Split("/"));
-                if ( !Files.Contains( fileName ) ) {
-                    Logger.Warn( $"Request for {fileName} ignored: File doesn't exist" );
+                string? file;
+                Resources.TryGetValue( path, out file );
+                if ( file == null ) {
+                    Logger.Warn($"Request for {path} ignored: No endpoint exists");
                     res.StatusCode = 404;
                     res.Close();
                     continue;
                 }
 
-                switch ( Path.GetExtension( fileName )[1..] ) {
-                    case "js":
-                        res.ContentType = "text/javascript";
-                        break;
-                    case "css":
-                        res.ContentType = "text/css";
-                        break;
-                    default:
-                        res.ContentType = "text/plain";
-                        break;
-                }
+                string extension = Path.GetExtension( file )[1..];
+                string? contentType;
+                ContentTypes.TryGetValue(extension, out contentType);
+                if (contentType == null) contentType = "text/plain";
+                res.ContentType = contentType;
 
-                res.ContentEncoding = Encoding.UTF8;
-                byte[] data = File.ReadAllBytes( fileName );
+                byte[] data = File.ReadAllBytes( Resources[path] );
                 await res.OutputStream.WriteAsync( data, 0, data.Length );
                 res.Close();
-                Logger.Info( $"Sent file {fileName}" );
+                Logger.Info( $"Sent file {path}" );
             }
 
-            Logger.Info("Recieved disconnect request");
+            Logger.Info("Stopped Listening");
             Running = false;
+        }
+
+        public void AddResource(string path, string file) {
+            if (AdditionalResources.ContainsKey(path)) AdditionalResources[path] = file;
+            else AdditionalResources.Add( path, file );
+        }
+
+        public void RemoveResource(string path) { 
+            if (AdditionalResources.ContainsKey(path)) AdditionalResources.Remove( path );
+        }
+
+        private void GetFiles() {
+            Resources.Clear();
+            List<string> files = new(Directory.GetFiles(FolderPath));
+            foreach (string file in files) {
+                string fileName = Path.GetFileName(file);
+                Resources.Add(fileName, file);
+            }
+            Resources = Resources.Concat( AdditionalResources ).ToDictionary(x => x.Key, x => x.Value);
         }
 
         private static string CombinePaths( string path, params string[] paths ) {

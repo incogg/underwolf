@@ -53,11 +53,6 @@ namespace underwolf_config
             ExtensionPath = path;
             ExtensionID = Path.GetFileName( path );
 
-            // create the config dir
-            ConfigPath = Path.Join( MainWindow.CONFIG_FOLDER, ExtensionID );
-            if (!Directory.Exists(ConfigPath))
-                Directory.CreateDirectory( ConfigPath );
-
             LatestVersion = new Version( "0.0.0" );
             string[] versions = Directory.GetDirectories(ExtensionPath);
             foreach ( string versionString in versions ) {
@@ -77,7 +72,11 @@ namespace underwolf_config
             IconIcoPath = Path.Join( ExtensionPath, manifest.meta.GetValueOrDefault("launcher_icon") );
             IconPngPath = Path.Join( ExtensionPath, manifest.meta.GetValueOrDefault("icon") );
 
-            CanEnable = !EXCLUSIONS.Contains( Title );
+            CanEnable = !EXCLUSIONS.Contains(Title);
+            // create the config dir
+            ConfigPath = Path.Join(MainWindow.CONFIG_FOLDER, ExtensionID);
+            if (!Directory.Exists(ConfigPath) && CanEnable)
+                Directory.CreateDirectory(ConfigPath);
         }
 
         public bool IsStateChanged() {
@@ -101,7 +100,7 @@ namespace underwolf_config
                 iconLocation = IconIcoPath;
 
             File.Delete( shortcutLocation );
-            ShortcutBuilder.Build( shortcutLocation, MainWindow.UNDERWOLF_EXECUTABLE, $"{Title} {ExtensionID}", iconLocation );
+            ShortcutBuilder.Build( shortcutLocation, MainWindow.UNDERWOLF_EXECUTABLE, $"\"{Title}\" \"{ExtensionID}\"", iconLocation );
         }
 
         private void DisableUnderwolf() {
