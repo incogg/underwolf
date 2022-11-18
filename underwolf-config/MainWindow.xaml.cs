@@ -41,15 +41,12 @@ namespace underwolf_config {
         public static string OVERWOLF_PATH_FILE = Path.Join (UNDERWOLF_FOLDER, "underwolf-path");
         public static string ENABLED_EXTENSIONS_FILE = Path.Join(WORKING_FOLDER, "enabled-extensions.json");
 
-        public List<OverwolfExtension> _Extensions = new();
+        private Dictionary<string, bool> EnabledExtensions = new();
+        private List<OverwolfExtension> _Extensions = new();
         public List<OverwolfExtension> Extensions {
             get { return _Extensions; }
             set { _Extensions = value; OnPropertyChanged(); }
         }
-
-
-        private Dictionary<string, bool> enabledExtensions = new();
-
 
         public MainWindow() {
 #if (DEBUG)
@@ -63,6 +60,7 @@ namespace underwolf_config {
             // get overwolf path
             if ( File.Exists(OVERWOLF_PATH_FILE)) OVERWOLF_FOLDER = File.ReadAllText(OVERWOLF_PATH_FILE);
 
+            // check if the overwolf path is correct 
             if ( !File.Exists( OVERWOLF_EXECUTABLE ) ) UpdateOverwolfPath();
             File.WriteAllText( OVERWOLF_PATH_FILE, OVERWOLF_FOLDER );
 
@@ -72,16 +70,13 @@ namespace underwolf_config {
             foreach ( string extensionPath in extensionPaths )
                 Extensions.Add( new OverwolfExtension( extensionPath ) );
 
+            // check which extensions are currently enabled
             LoadEnabledExtensions();
-            
-            
-            // create shortcut to use underwolf
-            // create directory for all the js that needs to be injected
-            // -> configure underwolf to look in this directory and inject and .js / .css files
-            // allow the removal of underwolf
-
         }
 
+        /// <summary>
+        /// Prompts the user to find the OverwolfLauncher executable
+        /// </summary>
         private void UpdateOverwolfPath() {
             MessageBox.Show( "Couldn't locate Overwolf intall location. Please select the correct location." );
             OpenFileDialog ofd = new() {
@@ -100,16 +95,19 @@ namespace underwolf_config {
             OVERWOLF_FOLDER = Path.GetDirectoryName( ofd.FileName )!;
         }
 
+        /// <summary>
+        /// Loads a list of enabled extensions from a JSON file
+        /// </summary>
         private void LoadEnabledExtensions() {
             if ( File.Exists( ENABLED_EXTENSIONS_FILE ) ) {
                 try {
-                    enabledExtensions = JsonSerializer.Deserialize<Dictionary<string, bool>>( File.ReadAllText( ENABLED_EXTENSIONS_FILE ) )!;
+                    EnabledExtensions = JsonSerializer.Deserialize<Dictionary<string, bool>>( File.ReadAllText( ENABLED_EXTENSIONS_FILE ) )!;
 
-                    foreach ( string id in enabledExtensions.Keys ) {
-                        bool state = enabledExtensions[id];
+                    foreach ( string id in EnabledExtensions.Keys ) {
+                        bool state = EnabledExtensions[id];
                         OverwolfExtension? ext = Extensions.Find( x => x.ExtensionID == id);
                         if ( ext == null )
-                            enabledExtensions.Remove( id );
+                            EnabledExtensions.Remove( id );
                         else {
                             ext.Enabled = state;
                             ext.OldState = state;
@@ -122,34 +120,42 @@ namespace underwolf_config {
 
             foreach ( OverwolfExtension ext in Extensions ) {
                 if ( !ext.CanEnable ) continue;
-                enabledExtensions.Add( ext.ExtensionID, ext.Enabled );
+                EnabledExtensions.Add( ext.ExtensionID, ext.Enabled );
             }
         }
 
+        /// <summary>
+        /// Writes a list of enabled extensions to a JSON file
+        /// </summary>
         private void SaveEnabledExtensions() {
             foreach(OverwolfExtension ext in Extensions ) {
                 if ( !ext.CanEnable ) continue;
-                enabledExtensions[ext.ExtensionID] = ext.Enabled;
+                EnabledExtensions[ext.ExtensionID] = ext.Enabled;
             }
-
-            File.WriteAllText( ENABLED_EXTENSIONS_FILE, JsonSerializer.Serialize( enabledExtensions ) );
+            File.WriteAllText( ENABLED_EXTENSIONS_FILE, JsonSerializer.Serialize( EnabledExtensions ) );
+        }
+        
+        /// <summary>
+        /// Applies the current states of the changed Extensions
+        /// </summary>
+        private void OnApplyClicked( object sender, RoutedEventArgs e ) {
+            foreach (OverwolfExtension ext in Extensions ) if ( ext.IsStateChanged() ) ext.ToggleUnderwolf();
+            UpdateButtons(sender, e);
         }
 
-        private void ExtensionControl_OnEnabledChanged( object s, RoutedEventArgs e ) {
-            ExtensionControl sender = ( ExtensionControl )s;
-            OverwolfExtension? ext = Extensions.Find( x => x.ExtensionID == sender.ExtensionID);
-            if ( ext == null ) return;
-            ext.Enabled = sender.Enabled; // this shouldnt be necessary 
-
-            UpdateButtons();
+        /// <summary>
+        /// Reverts the states of the changed extensions
+        /// </summary>
+        private void OnCancelClicked( object sender, RoutedEventArgs e ) {
+            foreach (OverwolfExtension ext in Extensions) ext.RevertEnabledState();
+            UpdateButtons(sender, e);
         }
 
-        private void Window_Closing( object sender, CancelEventArgs e ) {
-            SaveEnabledExtensions();
-        }
-
-        private void UpdateButtons() {
-            foreach (OverwolfExtension ext in Extensions ) {
+        /// <summary>
+        /// Enables the Cancel and Save buttons if there is a pending state change
+        /// </summary>
+        private void UpdateButtons(object s, RoutedEventArgs e) {
+            foreach (OverwolfExtension ext in Extensions) {
                 if (ext.IsStateChanged()) {
                     ApplyButton.IsEnabled = true;
                     CancelButton.IsEnabled = true;
@@ -160,22 +166,11 @@ namespace underwolf_config {
             CancelButton.IsEnabled = false;
         }
 
-        private void ApplyButton_Click( object sender, RoutedEventArgs e ) {
-            foreach (OverwolfExtension ext in Extensions ) {
-                if ( ext.IsStateChanged() )
-                    ext.ToggleUnderwolf();
-            }
-
-            UpdateButtons();
-        }
-
-        private void CancelButton_Click( object sender, RoutedEventArgs e ) {
-            /*foreach ( OverwolfExtension ext in Extensions ) {
-                ext.RevertEnabledState();
-                Console.WriteLine( $"{ext.Title}: {ext.Enabled}" );
-            }*/
-            MessageBox.Show("Yeah this doesnt reall work yet.");
-            UpdateButtons();
+        /// <summary>
+        /// Saves the Enabled extensions to a JSON file before the window is closed
+        /// </summary>
+        private void Window_Closing(object sender, CancelEventArgs e) {
+            SaveEnabledExtensions();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

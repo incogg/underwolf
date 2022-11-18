@@ -39,8 +39,8 @@ namespace underwolf_config
             set {  _Enabled = value; OnPropertyChanged(); } 
         }
 
-
-        public string Title { get; set; }
+        private string _Title;
+        public string Title { get { return _Title; } set { _Title = value; OnPropertyChanged(); } }
         public string ExtensionID { get; set; }
         public string IconPngPath { get; set; }
         public string ExtensionPath { get; set; }
