@@ -46,14 +46,14 @@
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:OverwolfExtension}">
                     <StackPanel>
-                        <local:ExtensionControl Title="{Binding Path=Title}" ExtensionID="{Binding Path=ExtensionID}" Enabled="{Binding Path=Enabled}" CanEnable="{Binding Path=CanEnable}" IconPngPath="{Binding Path=IconPngPath}" OnEnabledChanged="ExtensionControl_OnEnabledChanged"/>
+                        <local:ExtensionControl Title="{Binding Path=Title}" ExtensionID="{Binding Path=ExtensionID}" Enabled="{Binding Path=Enabled, Mode=TwoWay}" CanEnable="{Binding Path=CanEnable}" IconPngPath="{Binding Path=IconPngPath}" OnEnabledChanged="UpdateButtons"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
         <Grid VerticalAlignment="Bottom" Height="64" Background="#FF383838">
-            <Button x:Name="ApplyButton"  Click="ApplyButton_Click" Content="Apply" IsEnabled="False" Margin="0,0,30,0" VerticalAlignment="Center" Height="42" HorizontalAlignment="Right" Width="112" BorderBrush="{x:Null}" Background="#FF379767" FontSize="20" FontWeight="Bold"/>
-            <Button x:Name="CancelButton" Click="CancelButton_Click" Content="Cancel" IsEnabled="False" Margin="0,0,150,0" VerticalAlignment="Center" Height="42" HorizontalAlignment="Right" Width="112" BorderBrush="{x:Null}" Background="#FFC53539" FontSize="20" FontWeight="Bold"/>
+            <Button x:Name="ApplyButton"  Click="OnApplyClicked" Content="Apply" IsEnabled="False" Margin="0,0,30,0" VerticalAlignment="Center" Height="42" HorizontalAlignment="Right" Width="112" BorderBrush="{x:Null}" Background="#FF379767" FontSize="20" FontWeight="Bold"/>
+            <Button x:Name="CancelButton" Click="OnCancelClicked" Content="Cancel" IsEnabled="False" Margin="0,0,150,0" VerticalAlignment="Center" Height="42" HorizontalAlignment="Right" Width="112" BorderBrush="{x:Null}" Background="#FFC53539" FontSize="20" FontWeight="Bold"/>
         </Grid>
     </Grid>
 </Window>
