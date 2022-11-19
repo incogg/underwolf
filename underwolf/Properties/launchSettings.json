@@ -2,7 +2,7 @@
   "profiles": {
     "underwolf": {
       "commandName": "Project",
-      "commandLineArgs": "CurseForge cchhcaiapeikjbdbpfplgmpobbcdkdaphclbmkbj\r\n"
+      "commandLineArgs": "CurseForge cchhcaiapeikjbdbpfplgmpobbcdkdaphclbmkbj true"
     }
   }
 }

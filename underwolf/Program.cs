@@ -30,7 +30,7 @@ namespace underwolf {
         /// <summary>
         /// Entry point
         /// </summary>
-        /// <param name="args">should be in format {appTitle} {appID}</param>
+        /// <param name="args">should be in format {appTitle} {appID} [keepAlive]</param>
         static async Task Main( string[] args ) {
 #if (DEBUG)
             AllocConsole();
@@ -45,6 +45,7 @@ namespace underwolf {
 
             string appTitle = args[0];
             string appID = args[1];
+            string? keepAlive = args[2];
 
             if ( !ReadFile( CONFIG_PATH_FILE, out CONFIG_PATH ) ) goto end;
             if ( !ReadFile( OVERWOLF_PATH_FILE, out OVERWOLF_PATH ) ) goto end;
@@ -57,11 +58,7 @@ namespace underwolf {
                 goto end;
             }
 
-#if (DEBUG)
-            OverwolfExtension curse = new(curseJson, appID, true);
-#else
-            OverwolfExtension curse = new(curseJson, appID);
-#endif
+            OverwolfExtension curse = new(curseJson, appID, keepAlive != null);
             await curse.Connect();
             curse.InjectAllFiles();
 
