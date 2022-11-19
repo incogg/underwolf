@@ -1,23 +1,12 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
+using Microsoft.Win32;
 
 namespace underwolf_config {
 
@@ -67,8 +56,7 @@ namespace underwolf_config {
             // get all of the extensions 
             Extensions = new();
             string[] extensionPaths = Directory.GetDirectories(EXTENSION_FOLDER);
-            foreach ( string extensionPath in extensionPaths )
-                Extensions.Add( new OverwolfExtension( extensionPath ) );
+            foreach ( string extensionPath in extensionPaths ) Extensions.Add( new OverwolfExtension( extensionPath ) ); // this should be try catched
 
             // check which extensions are currently enabled
             LoadEnabledExtensions();

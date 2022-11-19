@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace underwolf_config
 {
@@ -36,82 +33,93 @@ namespace underwolf_config
         private bool _Enabled;
         public bool Enabled { 
             get { return _Enabled; }
-            set {  _Enabled = value; OnPropertyChanged(); } 
+            set {  _Enabled = value; OnPropertyChanged(); }
         }
-
-        private string _Title;
-        public string Title { get { return _Title; } set { _Title = value; OnPropertyChanged(); } }
+        public string Title { get; set; }
         public string ExtensionID { get; set; }
         public string IconPngPath { get; set; }
-        public string ExtensionPath { get; set; }
-        public string ConfigPath { get; set; }
-        public Version LatestVersion { get; set; }
-        public string? IconIcoPath { get; set; }
         public bool CanEnable { get; set; }
 
-        public OverwolfExtension( string path ) {
+
+        public string ExtensionPath;
+        public string ConfigPath;
+        public Version LatestVersion;
+        public string? IconIcoPath;
+
+        public OverwolfExtension( string path ) { 
             ExtensionPath = path;
             ExtensionID = Path.GetFileName( path );
 
+            // get the folder of the latest version
             LatestVersion = new Version( "0.0.0" );
-            string[] versions = Directory.GetDirectories(ExtensionPath);
-            foreach ( string versionString in versions ) {
+            foreach ( string versionString in Directory.GetDirectories(ExtensionPath)) {
                 Version version = new( Path.GetFileName( versionString ));
-                if ( version > LatestVersion )
-                    LatestVersion = version;
+                if ( version > LatestVersion ) LatestVersion = version;
             }
-
             ExtensionPath = Path.Join( ExtensionPath, LatestVersion.ToString() );
 
+            // read the extensions manifest
             string manifestString = File.ReadAllText(Path.Join(ExtensionPath, "manifest.json"));
             ExtensionManifest? manifest = JsonSerializer.Deserialize<ExtensionManifest>(manifestString);
-            if ( manifest == null )
-                throw new Exception( "Extension has no manifest" );
+            if ( manifest == null ) throw new Exception( "Extension has no manifest" );
 
             Title = manifest.meta["name"];
             IconIcoPath = Path.Join( ExtensionPath, manifest.meta.GetValueOrDefault("launcher_icon") );
             IconPngPath = Path.Join( ExtensionPath, manifest.meta.GetValueOrDefault("icon") );
 
+            // dont allow user to enable underwolf for extensions like Overwolf Settings
             CanEnable = !EXCLUSIONS.Contains(Title);
+
             // create the config dir
             ConfigPath = Path.Join(MainWindow.CONFIG_FOLDER, ExtensionID);
-            if (!Directory.Exists(ConfigPath) && CanEnable)
-                Directory.CreateDirectory(ConfigPath);
+            if (!Directory.Exists(ConfigPath) && CanEnable) Directory.CreateDirectory(ConfigPath);
         }
 
+        /// <summary>
+        /// Checks if the state of the extension has changed
+        /// </summary>
+        /// <returns>True if the state has changed otherwise false</returns>
         public bool IsStateChanged() {
             return Enabled != OldState;
         }
 
+        /// <summary>
+        /// Reverts the enabled state of the extension
+        /// </summary>
         public void RevertEnabledState() {
             Enabled = OldState;
         }
 
+        /// <summary>
+        /// Toggles the enabled state of the extension
+        /// </summary>
         public void ToggleUnderwolf() {
             if ( Enabled ) EnableUnderwolf();
             else DisableUnderwolf();
             OldState = Enabled;
         }
 
+        /// <summary>
+        /// Remakes extension's shortcut to point to Underwolf
+        /// </summary>
         private void EnableUnderwolf() {
             string shortcutLocation = Path.Join( MainWindow.START_MENU_FOLDER, $"{Title}.lnk" );
-            string iconLocation = "";
-            if ( IconIcoPath != null )
-                iconLocation = IconIcoPath;
+            string iconLocation = IconIcoPath ?? string.Empty; 
 
             File.Delete( shortcutLocation );
             ShortcutBuilder.Build( shortcutLocation, MainWindow.UNDERWOLF_EXECUTABLE, $"\"{Title}\" \"{ExtensionID}\"", iconLocation );
         }
 
+        /// <summary>
+        /// Remakes extension's shortcut to point to Overwolf
+        /// </summary>
         private void DisableUnderwolf() {
             string shortcutLocation = Path.Join( MainWindow.START_MENU_FOLDER, $"{Title}.lnk" );
-            string iconLocation = "";
-            if ( IconIcoPath != null ) iconLocation = IconIcoPath;
+            string iconLocation = IconIcoPath ?? string.Empty;
 
-            File.Delete( shortcutLocation );
+            File.Delete(shortcutLocation);
             ShortcutBuilder.Build( shortcutLocation, MainWindow.OVERWOLF_EXECUTABLE, $"-launchapp {ExtensionID} -from-desktop", iconLocation );
         }
-
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged( [CallerMemberName] string? name = null ) {
