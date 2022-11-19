@@ -39,12 +39,12 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid MinWidth="500">
+    <Grid MinWidth="500" MaxHeight="64">
 
-        <Image x:Name="Image" HorizontalAlignment="Left" Height="64" VerticalAlignment="Top" Width="64" Source="C:\Users\inito\AppData\Local\Overwolf\Extensions\cchhcaiapeikjbdbpfplgmpobbcdkdaphclbmkbj\0.212.2.7022\assets\images\icon.png"/>
-        <Label x:Name="TitleLabel" Content="{Binding ElementName=Root, Path=Title}" HorizontalAlignment="Left" Margin="64,6,0,0" VerticalAlignment="Top" FontSize="18" FontWeight="Bold" Foreground="White"/>
-        <Label x:Name="ExtensionIDLabel" Content="{Binding ElementName=Root, Path=ExtensionID}" HorizontalAlignment="Left" Margin="64,32,0,0" VerticalAlignment="Top" Foreground="#FF4C4C4C"/>
-        <Button x:Name="Button" Content="Enable" Click="OnClick" IsEnabled="{Binding ElementName=Root, Path=CanEnable}" Margin="0,0,48,0" VerticalAlignment="Center" BorderThickness="0,0,0,0" BorderBrush="{x:Null}" Foreground="#FF1A1A1A" Background="#FFF94348" Padding="4,4,4,4" ScrollViewer.CanContentScroll="True" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" Width="94"/>
+        <Image x:Name="Image" HorizontalAlignment="Left" Height="64" VerticalAlignment="Top" Width="64" Source="{Binding ElementName=Root, Path=Extension.IconPngPath, Mode=TwoWay}"/>
+        <Label x:Name="TitleLabel" Content="{Binding ElementName=Root, Path=Extension.Title, Mode=TwoWay}" HorizontalAlignment="Left" Margin="64,6,0,0" VerticalAlignment="Top" FontSize="18" FontWeight="Bold" Foreground="White"/>
+        <Label x:Name="ExtensionIDLabel" Content="{Binding ElementName=Root, Path=Extension.ExtensionID, Mode=TwoWay}" HorizontalAlignment="Left" Margin="64,32,0,0" VerticalAlignment="Top" Foreground="#FF4C4C4C"/>
+        <Button x:Name="Button" Content="Enable" Click="OnClick" IsEnabled="{Binding ElementName=Root, Path=Extension.CanEnable}" Margin="0,0,48,0" VerticalAlignment="Center" BorderThickness="0,0,0,0" BorderBrush="{x:Null}" Foreground="#FF1A1A1A" Background="#FFF94348" Padding="4,4,4,4" ScrollViewer.CanContentScroll="True" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" Width="94"/>
         <Button HorizontalAlignment="Right" VerticalAlignment="Center" RenderTransformOrigin="-0.095,-0.166" Width="16" Height="16" FontFamily="Segoe UI" FontSize="16" Margin="0,0,16,0" BorderThickness="0,0,0,0" ClipToBounds="True" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
             <Image Source="/play-solid.png" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"></Image>
         </Button>

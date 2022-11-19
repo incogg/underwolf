@@ -40,6 +40,8 @@ namespace underwolf_config
         public string IconPngPath { get; set; }
         public bool CanEnable { get; set; }
 
+        public OverwolfExtension Extension { get { return this; } }
+
 
         public string ExtensionPath;
         public string ConfigPath;

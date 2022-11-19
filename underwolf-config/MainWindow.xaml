@@ -46,7 +46,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:OverwolfExtension}">
                     <StackPanel>
-                        <local:ExtensionControl Title="{Binding Path=Title}" ExtensionID="{Binding Path=ExtensionID}" Enabled="{Binding Path=Enabled, Mode=TwoWay}" CanEnable="{Binding Path=CanEnable}" IconPngPath="{Binding Path=IconPngPath}" OnEnabledChanged="UpdateButtons"/>
+                        <local:ExtensionControl Extension="{Binding Extension}" OnEnabledChanged="UpdateButtons"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
