@@ -45,8 +45,8 @@ namespace underwolf {
             Listener.Prefixes.Add(Url);
 
             Watcher = new(FolderPath) {
-                NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Security | NotifyFilters.Size
-        };
+                NotifyFilter = NotifyFilters.Attributes | NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Security | NotifyFilters.Size
+            };
             Watcher.IncludeSubdirectories = true;
             Watcher.EnableRaisingEvents = true;
             Watcher.Changed += (object sender, FileSystemEventArgs e) => OnFilesChanged?.Invoke(); // this runs twice...
@@ -60,7 +60,7 @@ namespace underwolf {
             UnderwolfVariables = new();
         }
 
-        public void Start() {
+        public void Start(bool keepAlive = false) {
             Listener.Start();
             Running = true;
             Logger.Info($"Started listening at {Url}");

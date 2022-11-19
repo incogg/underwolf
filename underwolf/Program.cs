@@ -57,10 +57,13 @@ namespace underwolf {
                 goto end;
             }
 
+#if (DEBUG)
+            OverwolfExtension curse = new(curseJson, appID, true);
+#else
             OverwolfExtension curse = new(curseJson, appID);
+#endif
             await curse.Connect();
             curse.InjectAllFiles();
-            //await curse.Disconnect();
 
 end:
 #if (DEBUG)
