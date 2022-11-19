@@ -45,10 +45,10 @@ namespace underwolf {
             Listener.Prefixes.Add(Url);
 
             Watcher = new(FolderPath) {
-                NotifyFilter = NotifyFilters.Attributes | NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Security | NotifyFilters.Size
+                NotifyFilter = NotifyFilters.Attributes | NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Security | NotifyFilters.Size,
+                IncludeSubdirectories = true,
+                EnableRaisingEvents = true
             };
-            Watcher.IncludeSubdirectories = true;
-            Watcher.EnableRaisingEvents = true;
             Watcher.Changed += (object sender, FileSystemEventArgs e) => OnFilesChanged?.Invoke(); // this runs twice...
 
             Resources = new();
@@ -60,13 +60,19 @@ namespace underwolf {
             UnderwolfVariables = new();
         }
 
-        public void Start(bool keepAlive = false) {
+        /// <summary>
+        /// Starts the file server
+        /// </summary>
+        public void Start() {
             Listener.Start();
             Running = true;
             Logger.Info($"Started listening at {Url}");
             Task.Run(HandleIncomingConnections);
         }
 
+        /// <summary>
+        /// Stops the file server
+        /// </summary>
         public void Stop() {
             Logger.Info("Waiting for disconnect request...");
             while (Running) ;
@@ -74,17 +80,19 @@ namespace underwolf {
             Listener.Stop();
         }
 
-        public async Task HandleIncomingConnections() {
+        /// <summary>
+        /// Processes any incoming connections
+        /// </summary>
+        private async Task HandleIncomingConnections() {
             while (Running) {
                 HttpListenerContext ctx = await Listener.GetContextAsync();
-
                 HttpListenerRequest req = ctx.Request;
                 HttpListenerResponse res = ctx.Response;
                 if (req.Url == null) continue;
 
                 GetFiles();
-
                 string path = req.Url.AbsolutePath[1..]; // remove leading slash
+
                 Delegate? func;
                 FunctionResources.TryGetValue(path, out func);
                 if (func != null) {
@@ -94,8 +102,7 @@ namespace underwolf {
                     continue;
                 }
 
-                string? file;
-                Resources.TryGetValue(path, out file);
+                Resources.TryGetValue(path, out string? file);
                 if (file == null) {
                     Logger.Warn($"Request for {path} ignored: No endpoint exists");
                     res.StatusCode = 404;
@@ -104,10 +111,8 @@ namespace underwolf {
                 }
 
                 string extension = Path.GetExtension( file )[1..];
-                string? contentType;
-                ContentTypes.TryGetValue(extension, out contentType);
-                if (contentType == null) contentType = "text/plain";
-                res.ContentType = contentType;
+                ContentTypes.TryGetValue(extension, out string? contentType);
+                res.ContentType = contentType ?? "text/plain";
 
                 string data = File.ReadAllText(file);
                 data = ReplaceAllVariables(data);
@@ -122,29 +127,53 @@ namespace underwolf {
             Running = false;
         }
 
-        private string ReplaceAllVariables(string data) {
-            foreach (string key in UnderwolfVariables.Keys) {
-                data = data.Replace(key, UnderwolfVariables[key]);
-            }
-            return data;
-        }
-
+        /// <summary>
+        /// Adds a varaible to replace in the content of files sent
+        /// </summary>
+        /// <param name="name">name of the variable</param>
+        /// <param name="value">value to replace with</param>
         public void AddVariable(string name, string value) {
             UnderwolfVariables.TryAdd(name, value);
         }
 
+        /// <summary>
+        /// Removes a varaible
+        /// </summary>
+        /// <param name="name">name of the variable</param>
         public void RemoveVariable(string name) {
             if (UnderwolfVariables.ContainsKey(name)) UnderwolfVariables.Remove(name);
         }
+        
+        /// <summary>
+        /// Replaces all variables with their values
+        /// </summary>
+        /// <param name="data">input data</param>
+        /// <returns>returns data with all the variables replaced</returns>
+        private string ReplaceAllVariables(string data) {
+            foreach (string key in UnderwolfVariables.Keys) data = data.Replace(key, UnderwolfVariables[key]);
+            return data;
+        }
 
+        /// <summary>
+        /// Adds a resource that isn't in the FolderPath
+        /// </summary>
+        /// <param name="path">resource path</param>
+        /// <param name="file">file path</param>
         public void AddResource(string path, string file) {
             AdditionalResources.TryAdd(path, file);
         }
 
+        /// <summary>
+        /// Removes a hosted resource
+        /// </summary>
+        /// <param name="path">path to resource</param>
         public void RemoveResource(string path) {
             if (AdditionalResources.ContainsKey(path)) AdditionalResources.Remove(path);
         }
 
+        /// <summary>
+        /// Add all the files from FolderPath into the Resources dictionary
+        /// </summary>
         private void GetFiles() {
             Resources.Clear();
             List<string> files = new(Directory.GetFiles(FolderPath));
@@ -155,12 +184,14 @@ namespace underwolf {
             Resources = Resources.Concat(AdditionalResources).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        private static string CombinePaths(string path, params string[] paths) {
-            if (paths == null) return path;
-            return paths.Aggregate(path, (acc, p) => Path.Combine(acc, p));
-        }
-
-        public static int GetFirstAvailablePort(int startingPort) {
+        // Credit to stackoverflow
+        // Source: https://stackoverflow.com/a/45384984
+        /// <summary>
+        /// Gets the first port that is not in use
+        /// </summary>
+        /// <param name="startingPort">the lowest possible port to return</param>
+        /// <returns>an avaliable port</returns>
+        private static int GetFirstAvailablePort(int startingPort) {
             var properties = IPGlobalProperties.GetIPGlobalProperties();
 
             // get active connections
