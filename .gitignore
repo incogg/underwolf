@@ -1,3 +1,5 @@
 bin/
 obj/
 .vs/
+underwolf-installer/Debug
+underwolf-installer/Release
