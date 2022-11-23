@@ -60,6 +60,20 @@ namespace underwolf_config {
 
             // check which extensions are currently enabled
             LoadEnabledExtensions();
+
+            OpenListPage();
+        }
+
+        private void OpenListPage() {
+            ListPage listPage = new(Extensions);
+            listPage.OnOpenSettings += OpenSettingsPage;
+            Frame.Content = listPage;
+        }
+
+        private void OpenSettingsPage(object sender, OverwolfExtension extension) {
+            ExtensionSettingsPage extPage = new( extension );
+            extPage.OnBack += (object sender, RoutedEventArgs e) => OpenListPage();
+            Frame.Content = extPage;
         }
 
         /// <summary>
@@ -121,37 +135,6 @@ namespace underwolf_config {
                 EnabledExtensions[ext.ExtensionID] = ext.Enabled;
             }
             File.WriteAllText( ENABLED_EXTENSIONS_FILE, JsonSerializer.Serialize( EnabledExtensions ) );
-        }
-        
-        /// <summary>
-        /// Applies the current states of the changed Extensions
-        /// </summary>
-        private void OnApplyClicked( object sender, RoutedEventArgs e ) {
-            foreach (OverwolfExtension ext in Extensions ) if ( ext.IsStateChanged() ) ext.ToggleUnderwolf();
-            UpdateButtons(sender, e);
-        }
-
-        /// <summary>
-        /// Reverts the states of the changed extensions
-        /// </summary>
-        private void OnCancelClicked( object sender, RoutedEventArgs e ) {
-            foreach (OverwolfExtension ext in Extensions) ext.RevertEnabledState();
-            UpdateButtons(sender, e);
-        }
-
-        /// <summary>
-        /// Enables the Cancel and Save buttons if there is a pending state change
-        /// </summary>
-        private void UpdateButtons(object s, RoutedEventArgs e) {
-            foreach (OverwolfExtension ext in Extensions) {
-                if (ext.IsStateChanged()) {
-                    ApplyButton.IsEnabled = true;
-                    CancelButton.IsEnabled = true;
-                    return;
-                }
-            }
-            ApplyButton.IsEnabled = false;
-            CancelButton.IsEnabled = false;
         }
 
         /// <summary>

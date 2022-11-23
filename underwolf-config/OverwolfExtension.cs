@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
@@ -39,9 +40,7 @@ namespace underwolf_config
         public string ExtensionID { get; set; }
         public string IconPngPath { get; set; }
         public bool CanEnable { get; set; }
-
-        public OverwolfExtension Extension { get { return this; } }
-
+        public List<string> Files { get { return GetConfigPathFiles(); } }
 
         public string ExtensionPath;
         public string ConfigPath;
@@ -75,6 +74,14 @@ namespace underwolf_config
             // create the config dir
             ConfigPath = Path.Join(MainWindow.CONFIG_FOLDER, ExtensionID);
             if (!Directory.Exists(ConfigPath) && CanEnable) Directory.CreateDirectory(ConfigPath);
+        }
+        
+        /// <summary>
+        /// Gets all the files in the config directory
+        /// </summary>
+        /// <returns>A list of all the files in the config directory</returns>
+        public List<string> GetConfigPathFiles() {
+            return Directory.GetFiles(ConfigPath).ToList();
         }
 
         /// <summary>

@@ -1,0 +1,41 @@
+﻿<Page x:Class="underwolf_config.ExtensionSettingsPage"
+      x:Name="Root"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:underwolf_config"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" 
+      d:DesignWidth="600"
+      MinHeight="450"
+      MinWidth="600"
+      Title="ExtensionSettingsPage"
+      >
+    
+    <Grid Background="#FF1A1A1A">
+        <ListView x:Name="FileList" ItemsSource="{Binding ElementName=Root, Path=Extension.Files}" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" HorizontalContentAlignment="Stretch" Margin="16,80,16,16">
+            <ListView.ItemTemplate>
+                <DataTemplate >
+                    <StackPanel>
+                        <local:FileControl FilePath="{Binding}" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <DockPanel VerticalAlignment="Top">
+            <Button HorizontalAlignment="Left" Click="OnBackClicked" VerticalAlignment="Center" Width="16" Height="16" FontFamily="Segoe UI" FontSize="16" Margin="16,0,16,0" BorderThickness="0,0,0,0" ClipToBounds="True" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                <Image Source="/images/back.png" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
+            </Button>
+            <Image x:Name="ExtensionImage" Width="64" Height="64" Source="{Binding ElementName=Root, Path=Extension.IconPngPath}"/>
+            <StackPanel HorizontalAlignment="Left" Margin="10,0,0,0">
+                <Label x:Name="ExtensionTitleLabel" Content="{Binding ElementName=Root, Path=Extension.Title}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                <Label x:Name="ExtensionIDLabel" Content="{Binding ElementName=Root, Path=Extension.ExtensionID}" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF4C4C4C"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="FolderButton" Click="OnOpenFolderClicked" Content="Open Folder" VerticalAlignment="Center" BorderThickness="0,0,0,0" BorderBrush="{x:Null}" Foreground="#FF1A1A1A" Background="#FF3CC5F8" Padding="4,4,4,4" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" Width="128" Height="30" Margin="0,0,16,0"/>
+                <Button x:Name="LaunchButton" Click="OnLaunchClicked"  Content="Launch" VerticalAlignment="Center" BorderThickness="0,0,0,0" BorderBrush="{x:Null}" Foreground="#FF1A1A1A" Background="#FF4ACB8A" Padding="4,4,4,4" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" Width="94" Height="30" Margin="0,0,24,0"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Page>

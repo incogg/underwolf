@@ -45,7 +45,9 @@ namespace underwolf {
 
             string appTitle = args[0];
             string appID = args[1];
-            string? keepAlive = args[2];
+            bool keepAlive = false;
+
+            foreach (string arg in args) if (arg == "--keep-alive") keepAlive = true;
 
             if ( !ReadFile( CONFIG_PATH_FILE, out CONFIG_PATH ) ) goto end;
             if ( !ReadFile( OVERWOLF_PATH_FILE, out OVERWOLF_PATH ) ) goto end;
@@ -58,7 +60,7 @@ namespace underwolf {
                 goto end;
             }
 
-            OverwolfExtension curse = new(curseJson, appID, keepAlive != null);
+            OverwolfExtension curse = new(curseJson, appID, keepAlive);
             await curse.Connect();
             curse.InjectAllFiles();
 
@@ -91,7 +93,7 @@ end:
         /// <param name="appTitle">The Title of the extension to run</param>
         /// <returns>true if the extension started and was found otherwise false</returns>
         static bool StartApplication( string appID, string appTitle ) {
-            Process.Start( Path.Join( OVERWOLF_PATH, "OverwolfLauncher.exe" ), $"-launchapp {appID} -from-startmenu" );
+            Process.Start( Path.Join( OVERWOLF_PATH, "OverwolfLauncher.exe" ), $"-launchapp {appID} -from-desktop" );
 
             Task waitTask = Task.Run(() => {
                 Logger.Info($"Waiting for {appTitle} to start...");

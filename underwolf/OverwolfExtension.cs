@@ -47,7 +47,7 @@ namespace underwolf {
         public string Title;
         public string ExtensionID;
 
-        private Logger Logger = new("Extension");
+        private Logger Logger;
         private WebsocketClient WSClient;
         private FileServer FileServer;
         private List<int> ProcessingIds = new();
@@ -62,7 +62,9 @@ namespace underwolf {
             ExtensionID = appID;
             WebSocketDebuggerUrl = json.webSocketDebuggerUrl;
             ConfigPath = Path.Join(Program.CONFIG_PATH, ExtensionID);
+            Logger = new(Title);
             KeepAlive = keepAlive;
+            if (KeepAlive) Logger.Info("Keep alive enabled");
 
             FileServer = new(ConfigPath);
             FileServer.OnExtensionReload += OnExtensionReload;
@@ -70,8 +72,6 @@ namespace underwolf {
             FileServer.OnFilesChanged += OnFilesChanged;
             FileServer.AddResource("underwolf-utilities.js", Path.Join(Program.CONFIG_PATH, "utilities.js"));
             FileServer.AddVariable("[UNDERWOLF-FILESERVER]", FileServer.Url);
-
-            Logger = new(Title);
 
             WSClient = new(new Uri(WebSocketDebuggerUrl)) {
                 ReconnectTimeout = TimeSpan.FromSeconds(30)

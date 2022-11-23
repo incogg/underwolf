@@ -13,19 +13,32 @@ namespace underwolf_config {
             remove { RemoveHandler(OnEnabledChangedEvent, value); }
         }
 
+        public static readonly RoutedEvent OnOpenSettingsEvent = EventManager.RegisterRoutedEvent( name: "OnOpenSettings", routingStrategy: RoutingStrategy.Bubble, handlerType: typeof(RoutedEventHandler), ownerType: typeof(ExtensionControl));
+        public event RoutedEventHandler OnOpenSettings {
+            add { AddHandler(OnOpenSettingsEvent, value); }
+            remove { RemoveHandler(OnOpenSettingsEvent, value); }
+        }
+
         public OverwolfExtension Extension {
             get { return (OverwolfExtension)GetValue(ExtensionProperty); }
             set { SetValue(ExtensionProperty, value); }
         }
         public static readonly DependencyProperty ExtensionProperty = DependencyProperty.Register("Extension", typeof(OverwolfExtension), typeof(ExtensionControl), new PropertyMetadata(null, ExtensionChangedCallback));
 
-        private static readonly Color ACTIVECOLOR = Color.FromRgb(74, 203, 138);
-        private static readonly Color INACTIVECOLOR = Color.FromRgb(249, 67, 72);
-        private static readonly SolidColorBrush ACTIVEBRUSH = new(ACTIVECOLOR);
-        private static readonly SolidColorBrush INACTIVEBRUSH = new(INACTIVECOLOR);
+        private static readonly Color ACTIVE_COLOUR = Color.FromRgb(74, 203, 138);
+        private static readonly Color INACTIVE_COLOUR = Color.FromRgb(249, 67, 72);
+        private static readonly SolidColorBrush ACTIVE_BRUSH = new(ACTIVE_COLOUR);
+        private static readonly SolidColorBrush INACTIVE_BRUSH = new(INACTIVE_COLOUR);
 
         public ExtensionControl() {
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Triggered once all the Dependency properties have been loaded
+        /// </summary>
+        private void OnLoad(object sender, RoutedEventArgs e) {
+            if (!Extension.CanEnable) SettingsButton.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -33,12 +46,20 @@ namespace underwolf_config {
         /// </summary>
         private void UpdateAppearance() {
             if ( Extension.Enabled ) {
-                Button.Background = ACTIVEBRUSH;
+                Button.Background = ACTIVE_BRUSH;
                 Button.Content = "Disable";
             } else {
-                Button.Background = INACTIVEBRUSH;
+                Button.Background = INACTIVE_BRUSH;
                 Button.Content = "Enable";
             }
+        }
+
+        /// <summary>
+        /// Send and event to open the settings for the current extension
+        /// </summary>
+        private void OnSettingsClicked(object sender, RoutedEventArgs e) {
+            RoutedEventArgs args = new(routedEvent: OnOpenSettingsEvent);
+            RaiseEvent(args);
         }
 
         /// <summary>

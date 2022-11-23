@@ -24,6 +24,7 @@
   </Target>
 
   <ItemGroup>
+    <None Remove="back.png" />
     <None Remove="play-solid.png" />
   </ItemGroup>
 
@@ -40,7 +41,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="play-solid.png" />
+    <Resource Include="images\back.png" />
+    <Resource Include="images\forward.png" />
   </ItemGroup>
 
 	

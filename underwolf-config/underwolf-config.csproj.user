@@ -2,12 +2,24 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
-    <Compile Update="ExtensionSettingsControl.xaml.cs">
+    <Compile Update="ExtensionSettingsPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="FileControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ListPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="ExtensionSettingsControl.xaml">
+    <Page Update="ExtensionSettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="FileControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ListPage.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
