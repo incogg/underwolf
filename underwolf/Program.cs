@@ -19,10 +19,8 @@ namespace underwolf {
         public static readonly string DEBUGGER_URL = "http://localhost:54284/json";
         public static readonly int APPLICATION_TIMEOUT = 20; // in seconds
 
-        public static string WORKING_FOLDER = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!;
-        public static string CONFIG_PATH_FILE = Path.Join( WORKING_FOLDER, "config-path" );
-        public static string OVERWOLF_PATH_FILE = Path.Join (WORKING_FOLDER, "overwolf-path");
-        public static string CONFIG_PATH = "";
+        public static string CONFIG_FOLDER = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) , "underwolf");
+        public static string OVERWOLF_PATH_FILE = Path.Join (CONFIG_FOLDER, "overwolf-path");
         public static string OVERWOLF_PATH = "";
 
         private static readonly Logger Logger = new("Main");
@@ -49,9 +47,7 @@ namespace underwolf {
 
             foreach (string arg in args) if (arg == "--keep-alive") keepAlive = true;
 
-            if ( !ReadFile( CONFIG_PATH_FILE, out CONFIG_PATH ) ) goto end;
             if ( !ReadFile( OVERWOLF_PATH_FILE, out OVERWOLF_PATH ) ) goto end;
-
             if ( !StartApplication( appID, appTitle ) ) goto end;
 
             ExtensionJSON? curseJson = await GetExtension(appTitle);

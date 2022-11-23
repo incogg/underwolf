@@ -13,7 +13,7 @@ namespace underwolf_config {
     public partial class MainWindow : Window, INotifyPropertyChanged {
 
 #if (DEBUG)
-        [DllImport( "kernel32" )]
+        [DllImport("kernel32")]
         static extern int AllocConsole();
 #endif
 
@@ -24,11 +24,10 @@ namespace underwolf_config {
         public static string WORKING_FOLDER = Directory.GetCurrentDirectory();
         public static string UNDERWOLF_FOLDER = Path.Join(WORKING_FOLDER, "bin");
 
+        public static string OVERWOLF_PATH_FILE = Path.Join (CONFIG_FOLDER, "overwolf-path");
+        public static string ENABLED_EXTENSIONS_FILE = Path.Join(CONFIG_FOLDER, "enabled-extensions.json");
         public static string OVERWOLF_EXECUTABLE = Path.Join( OVERWOLF_FOLDER, "OverwolfLauncher.exe" );
         public static string UNDERWOLF_EXECUTABLE = Path.Join(UNDERWOLF_FOLDER, "underwolf.exe");
-        public static string CONFIG_PATH_FILE = Path.Join( UNDERWOLF_FOLDER, "config-path" );
-        public static string OVERWOLF_PATH_FILE = Path.Join (UNDERWOLF_FOLDER, "overwolf-path");
-        public static string ENABLED_EXTENSIONS_FILE = Path.Join(WORKING_FOLDER, "enabled-extensions.json");
 
         private Dictionary<string, bool> EnabledExtensions = new();
         private List<OverwolfExtension> _Extensions = new();
@@ -43,20 +42,20 @@ namespace underwolf_config {
 #endif
             InitializeComponent();
 
-            // write config folder location in /bin
-            File.WriteAllText( CONFIG_PATH_FILE, CONFIG_FOLDER );
+            // create the config dir if it doesnt exist
+            if (!Directory.Exists(CONFIG_FOLDER)) Directory.CreateDirectory(CONFIG_FOLDER);
 
             // get overwolf path
-            if ( File.Exists(OVERWOLF_PATH_FILE)) OVERWOLF_FOLDER = File.ReadAllText(OVERWOLF_PATH_FILE);
+            if (File.Exists(OVERWOLF_PATH_FILE)) OVERWOLF_FOLDER = File.ReadAllText(OVERWOLF_PATH_FILE);
 
             // check if the overwolf path is correct 
-            if ( !File.Exists( OVERWOLF_EXECUTABLE ) ) UpdateOverwolfPath();
-            File.WriteAllText( OVERWOLF_PATH_FILE, OVERWOLF_FOLDER );
+            if (!File.Exists(OVERWOLF_EXECUTABLE)) UpdateOverwolfPath();
+            File.WriteAllText(OVERWOLF_PATH_FILE, OVERWOLF_FOLDER);
 
             // get all of the extensions 
             Extensions = new();
             string[] extensionPaths = Directory.GetDirectories(EXTENSION_FOLDER);
-            foreach ( string extensionPath in extensionPaths ) Extensions.Add( new OverwolfExtension( extensionPath ) ); // this should be try catched
+            foreach (string extensionPath in extensionPaths) Extensions.Add(new OverwolfExtension(extensionPath)); // this should be try catched
 
             // check which extensions are currently enabled
             LoadEnabledExtensions();
@@ -80,7 +79,7 @@ namespace underwolf_config {
         /// Prompts the user to find the OverwolfLauncher executable
         /// </summary>
         private void UpdateOverwolfPath() {
-            MessageBox.Show( "Couldn't locate Overwolf intall location. Please select the correct location." );
+            MessageBox.Show("Couldn't locate Overwolf intall location. Please select the correct location.");
             OpenFileDialog ofd = new() {
                 Multiselect = false,
                 InitialDirectory = Environment.GetFolderPath( Environment.SpecialFolder.ProgramFilesX86 ),
@@ -88,41 +87,42 @@ namespace underwolf_config {
                 CheckPathExists = true,
                 DefaultExt = "exe"
             };
-            ofd.ShowDialog();
+            bool? res = ofd.ShowDialog();
 
-            while (Path.GetFileName(ofd.FileName) != "OverwolfLauncher.exe" ) {
-                MessageBox.Show( $"Incorrect File {ofd.FileName}" );
-                ofd.ShowDialog();
+            while (Path.GetFileName(ofd.FileName) != "OverwolfLauncher.exe") {
+                if (res == null || res == false) Environment.Exit(0);
+                MessageBox.Show($"Incorrect File {ofd.FileName}");
+                res = ofd.ShowDialog();
             }
-            OVERWOLF_FOLDER = Path.GetDirectoryName( ofd.FileName )!;
+            OVERWOLF_FOLDER = Path.GetDirectoryName(ofd.FileName)!;
         }
 
         /// <summary>
         /// Loads a list of enabled extensions from a JSON file
         /// </summary>
         private void LoadEnabledExtensions() {
-            if ( File.Exists( ENABLED_EXTENSIONS_FILE ) ) {
+            if (File.Exists(ENABLED_EXTENSIONS_FILE)) {
                 try {
-                    EnabledExtensions = JsonSerializer.Deserialize<Dictionary<string, bool>>( File.ReadAllText( ENABLED_EXTENSIONS_FILE ) )!;
+                    EnabledExtensions = JsonSerializer.Deserialize<Dictionary<string, bool>>(File.ReadAllText(ENABLED_EXTENSIONS_FILE))!;
 
-                    foreach ( string id in EnabledExtensions.Keys ) {
+                    foreach (string id in EnabledExtensions.Keys) {
                         bool state = EnabledExtensions[id];
                         OverwolfExtension? ext = Extensions.Find( x => x.ExtensionID == id);
-                        if ( ext == null )
-                            EnabledExtensions.Remove( id );
+                        if (ext == null)
+                            EnabledExtensions.Remove(id);
                         else {
                             ext.Enabled = state;
                             ext.OldState = state;
                         }
-                        
+
                     }
                     return;
-                } catch {}
+                } catch { }
             }
 
-            foreach ( OverwolfExtension ext in Extensions ) {
-                if ( !ext.CanEnable ) continue;
-                EnabledExtensions.Add( ext.ExtensionID, ext.Enabled );
+            foreach (OverwolfExtension ext in Extensions) {
+                if (!ext.CanEnable) continue;
+                EnabledExtensions.Add(ext.ExtensionID, ext.Enabled);
             }
         }
 
@@ -130,11 +130,11 @@ namespace underwolf_config {
         /// Writes a list of enabled extensions to a JSON file
         /// </summary>
         private void SaveEnabledExtensions() {
-            foreach(OverwolfExtension ext in Extensions ) {
-                if ( !ext.CanEnable ) continue;
+            foreach (OverwolfExtension ext in Extensions) {
+                if (!ext.CanEnable) continue;
                 EnabledExtensions[ext.ExtensionID] = ext.Enabled;
             }
-            File.WriteAllText( ENABLED_EXTENSIONS_FILE, JsonSerializer.Serialize( EnabledExtensions ) );
+            File.WriteAllText(ENABLED_EXTENSIONS_FILE, JsonSerializer.Serialize(EnabledExtensions));
         }
 
         /// <summary>
@@ -145,8 +145,8 @@ namespace underwolf_config {
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged( [CallerMemberName] string? name = null ) {
-            PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( name ) );
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

@@ -61,7 +61,7 @@ namespace underwolf {
             Title = json.title;
             ExtensionID = appID;
             WebSocketDebuggerUrl = json.webSocketDebuggerUrl;
-            ConfigPath = Path.Join(Program.CONFIG_PATH, ExtensionID);
+            ConfigPath = Path.Join(Program.CONFIG_FOLDER, ExtensionID);
             Logger = new(Title);
             KeepAlive = keepAlive;
             if (KeepAlive) Logger.Info("Keep alive enabled");
@@ -70,7 +70,7 @@ namespace underwolf {
             FileServer.OnExtensionReload += OnExtensionReload;
             FileServer.OnExtensionDisconnect += OnExtensionDisconnect;
             FileServer.OnFilesChanged += OnFilesChanged;
-            FileServer.AddResource("underwolf-utilities.js", Path.Join(Program.CONFIG_PATH, "utilities.js"));
+            FileServer.AddResource("underwolf-utilities.js", Path.Join(Program.CONFIG_FOLDER, "utilities.js"));
             FileServer.AddVariable("[UNDERWOLF-FILESERVER]", FileServer.Url);
 
             WSClient = new(new Uri(WebSocketDebuggerUrl)) {
