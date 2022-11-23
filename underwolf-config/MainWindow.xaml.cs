@@ -20,8 +20,8 @@ namespace underwolf_config {
         public static string OVERWOLF_FOLDER = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Overwolf");
         public static string EXTENSION_FOLDER = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Overwolf", "Extensions");
         public static string START_MENU_FOLDER = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Microsoft", "Windows", "Start Menu", "Programs", "Overwolf");
+        public static string CONFIG_FOLDER = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) , "underwolf");
         public static string WORKING_FOLDER = Directory.GetCurrentDirectory();
-        public static string CONFIG_FOLDER = Path.Join(WORKING_FOLDER , "config");
         public static string UNDERWOLF_FOLDER = Path.Join(WORKING_FOLDER, "bin");
 
         public static string OVERWOLF_EXECUTABLE = Path.Join( OVERWOLF_FOLDER, "OverwolfLauncher.exe" );
