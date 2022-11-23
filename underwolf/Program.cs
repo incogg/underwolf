@@ -21,7 +21,7 @@ namespace underwolf {
 
         public static string WORKING_FOLDER = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!;
         public static string CONFIG_PATH_FILE = Path.Join( WORKING_FOLDER, "config-path" );
-        public static string OVERWOLF_PATH_FILE = Path.Join (WORKING_FOLDER, "underwolf-path");
+        public static string OVERWOLF_PATH_FILE = Path.Join (WORKING_FOLDER, "overwolf-path");
         public static string CONFIG_PATH = "";
         public static string OVERWOLF_PATH = "";
 

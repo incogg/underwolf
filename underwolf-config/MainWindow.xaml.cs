@@ -27,7 +27,7 @@ namespace underwolf_config {
         public static string OVERWOLF_EXECUTABLE = Path.Join( OVERWOLF_FOLDER, "OverwolfLauncher.exe" );
         public static string UNDERWOLF_EXECUTABLE = Path.Join(UNDERWOLF_FOLDER, "underwolf.exe");
         public static string CONFIG_PATH_FILE = Path.Join( UNDERWOLF_FOLDER, "config-path" );
-        public static string OVERWOLF_PATH_FILE = Path.Join (UNDERWOLF_FOLDER, "underwolf-path");
+        public static string OVERWOLF_PATH_FILE = Path.Join (UNDERWOLF_FOLDER, "overwolf-path");
         public static string ENABLED_EXTENSIONS_FILE = Path.Join(WORKING_FOLDER, "enabled-extensions.json");
 
         private Dictionary<string, bool> EnabledExtensions = new();
