@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "underwolf", "underwolf\underwolf.csproj", "{70EF5B54-333F-4C24-8615-83FD2A285739}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "underwolf-config", "underwolf-config\underwolf-config.csproj", "{3E0D4B59-A7EA-4B43-A108-5CF0D6D36B12}"
+	ProjectSection(ProjectDependencies) = postProject
+		{70EF5B54-333F-4C24-8615-83FD2A285739} = {70EF5B54-333F-4C24-8615-83FD2A285739}
+	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "underwolf-installer", "underwolf-installer\underwolf-installer.vdproj", "{81515104-3895-4C6C-9498-87C850211D1E}"
 EndProject

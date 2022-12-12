@@ -32,9 +32,9 @@ namespace underwolf {
         static async Task Main( string[] args ) {
 #if (DEBUG)
             AllocConsole();
+            Console.Title = "Underwolf";
 #endif
 
-            Console.Title = "Underwolf";
 
             if (args.Length < 2 ) {
                 Logger.Error( "Invalid arguments provided" );

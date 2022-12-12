@@ -28,10 +28,6 @@
     <DefineConstants>$(DefineConstants)TRACE;RELEASE</DefineConstants>
   </PropertyGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="rd /s /q &quot;$(TargetDir)bin&quot;&#xD;&#xA;mkdir &quot;$(TargetDir)bin&quot;&#xD;&#xA;xcopy /s &quot;$(SolutionDir)bin\underwolf\$(Configuration)\net6.0&quot; &quot;$(TargetDir)bin&quot;&#xD;&#xA;" />
-  </Target>
-
   <ItemGroup>
     <None Remove="back.png" />
     <None Remove="play-solid.png" />

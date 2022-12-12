@@ -21,6 +21,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A041CC8091164896BD4F55E1791D3572"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_EEBB59103F064E6F98A2F59C21CB40D6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -122,6 +128,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A041CC8091164896BD4F55E1791D3572"
+            {
+            "SourcePath" = "8:..\\underwolf\\utilities.js"
+            "TargetName" = "8:utilities.js"
+            "Tag" = "8:"
+            "Folder" = "8:_BC921417A01F4263B11B46569201AA98"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -156,6 +182,28 @@
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
                     "Property" = "8:_EDFEF8D9075649109DF881BE59D2F651"
+                        "Folders"
+                        {
+                        }
+                    }
+                }
+            }
+            "{1525181F-901A-416C-8A58-119130FE478E}:_F115CA38A3844632B94511602F2A7712"
+            {
+            "Name" = "8:#1915"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:AppDataFolder"
+                "Folders"
+                {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_BC921417A01F4263B11B46569201AA98"
+                    {
+                    "Name" = "8:underwolf"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_3FC2FE6F5D934E55B3255BE8C3BDFA55"
                         "Folders"
                         {
                         }
@@ -775,7 +823,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_573AC78ECF8A46B2985720177198D4B2"
             {
-            "SourcePath" = "8:..\\underwolf\\obj\\x64\\Debug\\net6.0\\apphost.exe"
+            "SourcePath" = "8:..\\underwolf\\obj\\x64\\Release\\net6.0\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3EAF19D3FE4548DBBF9F7B9DF4314A72"
@@ -803,7 +851,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EEBB59103F064E6F98A2F59C21CB40D6"
             {
-            "SourcePath" = "8:..\\underwolf-config\\obj\\x64\\Debug\\net6.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\underwolf-config\\obj\\x64\\Release\\net6.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A52DD66D2C1545ABBBB47C66CC239CEE"
