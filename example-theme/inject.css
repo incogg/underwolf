@@ -1,0 +1,180 @@
+.section-background > * {
+    display: none;
+}
+
+.curseforge-menu {
+    background-color: #ffa789;
+    padding-top: 0;
+}
+
+.section-background {
+    background-color: #fff9f4;
+}
+
+.section-background::after {
+    background: none !important;
+}
+
+.minecraft-modpack-tile > .modpack-details {
+    border-radius: 0 0 1rem 1rem;
+    background-color: #ffa789 !important;
+}
+
+.minecraft-modpack-tile.is-open  .modpack-actions {
+    background-color: #ffdace !important;
+}
+
+.minecraft-modpack-tile > .modpack-details > h1 {
+    color: #fff8f3;
+    font-weight: bold;
+}
+
+.minecraft-modpack-tile > .modpack-details > small {
+    color: #d8d7d6;
+}
+
+.modapack-version {
+    background-color: #ffa789 !important;
+    color: #fff8f3 !important;
+}
+
+.modapack-version > span {
+    font-weight: bold;
+}
+
+.minecraft-modpack-tile > .modpack-tile-header > #row-image {
+    border-radius: 1rem 1rem 0 0;
+}
+
+.is-open {
+    border-radius: 1rem;
+}
+
+.btn-primary {
+    background-color: #ff8367 !important;
+}
+
+.select-dropdown svg {
+    color: #ff8367 !important;
+}
+
+.dropdown-selected-item, .dropdown-list {
+    background-color: #ffdace !important;
+}
+
+.dropdown-selected-item > span {
+    color: #ff8367 !important;
+    font-weight: bold;
+}
+
+.dropdown-list > .is-active  {
+    color: #ff8367 !important;
+    font-weight: bold;
+}
+
+.dropdown-list > li {
+    color: #999999 !important;
+}
+
+.tabs-menu a.is-active {
+    color: #ff8367 !important;
+    font-weight: bold;
+}
+
+.tabs-menu a.is-active::before {
+    background-color: #ff8367 !important;
+}
+
+.tabs-menu {
+    border-bottom-color: #363636 !important;
+}
+
+.user-menu-item svg {
+    color: #fff9f4 !important;
+}
+
+.system-menu a.is-active {
+    color: #fff9f4 !important;
+    background-color: #ffdace !important;
+}
+
+.system-menu a.tab-item {
+    color: #fff9f4 !important;
+    background-color: #ff8367 !important;
+}
+
+.curseforge-header {
+    background: linear-gradient(90deg,#ffa789, #ffbd9f, #ffd2b8, #ffe6d5, #fff9f4);
+}
+
+#search-addons {
+    background-color: #ffdace !important;
+
+}
+
+#support-menu > ul{
+    background-color: #ff8367;
+}
+
+#support-menu > ul::before{
+    background-color: #ff8367;
+}
+
+#support-menu > ul > li {
+    color: #fff9f4 !important;
+}
+
+.btn-clean {
+    color: #363636 !important;
+}
+
+.btn-clean:hover {
+    background-color: #ff8367 !important;
+    color: #fff9f4;
+}
+
+.tool-tip {
+    background-color: #ff8367 !important;
+    color: #fff9f4;
+    box-shadow: none;
+}
+
+.tool-tip::before {
+    background-color: #ff8367 !important;
+
+}
+
+.game-logo {
+    display: none;
+}
+
+.range-value-floater:hover {
+    background-color: #ff8367 !important;
+}
+
+.btn-action-single-icon:hover {
+    background-color: #ffdace !important;
+}
+
+.small-options-menu.is-open > .btn-action-single-icon {
+    background-color: #ffdace !important;
+    color: #1e1e1e;
+}
+
+.small-options-menu > ul {
+    background-color: #ff8367 !important;
+}
+
+.small-options-menu > ul > li {
+    color: #fff9f4;
+}
+
+.modal-pop-up {
+    background-color: #ff8367 !important;
+
+}
+
+input[type=text] {
+    background-color: #ffdace !important;
+    color: #fff9f4 !important;
+}
