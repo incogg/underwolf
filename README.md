@@ -31,19 +31,19 @@ A tool used to customise any [Overwolf](https://www.overwolf.com/) extensions su
 - Enable Underwolf for the desired extensions
 
 <p>
-    <img src=".github/assets/Underwolf-Disabled.png" alt="original curseforge theme" height="300px">  
+    <img src=".github/assets/Underwolf-disabled.png" alt="Enable Step" height="300px">  
 </p>
 
 
 <p>
-    <img src=".github/assets/Underwolf-Apply.png" alt="original curseforge theme" height="300px">  
+    <img src=".github/assets/Underwolf-Apply.png" alt="Apply step" height="300px">  
 </p>
 
 - Click `Apply`
 - Use the Start Menu shortcut for the Extension
 
 <p>
-    <img src=".github/assets/Start-Menu.png" alt="original curseforge theme" height="150px">  
+    <img src=".github/assets/Start-Menu.png" alt="Start Menu" height="150px">  
 </p>
 
 <br>
